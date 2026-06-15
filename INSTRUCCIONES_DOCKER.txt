@@ -1,0 +1,31 @@
+Esta configuración utiliza un proceso de "Construcción Multi-Etapa" (Multi-stage build). Primero usa Node.js para instalar y compilar (npm run build) tu proyecto de Svelte y luego usa Nginx (un servidor web superligero) únicamente para servir la carpeta compilada (dist). Además, incluye una configuración especial para que funcionen correctamente las rutas internas de svelte-routing.
+
+Aquí tienes una explicación paso a paso de cómo utilizarlo en Docker:
+
+### 1. Construir la imagen de Docker (Build)
+Abre tu terminal en la carpeta principal del proyecto (donde está el Dockerfile) y ejecuta el siguiente comando para construir la imagen. Le asignaremos el nombre "tourmanager-app":
+
+docker build -t tourmanager-app .
+
+*(El punto `.` al final es muy importante porque le indica a Docker que busque el Dockerfile en la carpeta actual).*
+
+### 2. Ejecutar el contenedor (Run)
+Una vez que la imagen termine de construirse exitosamente, puedes levantar un contenedor ejecutando:
+
+docker run -d -p 8080:80 --name mi-tourmanager tourmanager-app
+
+
+¿Qué significa este comando?
+- `-d`: Corre el contenedor en segundo plano (detached), para que puedas seguir usando tu terminal.
+- `-p 8080:80`: Mapea el puerto 8080 de tu computadora al puerto 80 del contenedor (que es donde escucha Nginx). Puedes cambiar el 8080 por cualquier otro puerto si lo deseas.
+- `--name mi-tourmanager`: Le da un nombre a tu contenedor para que sea fácil identificarlo después.
+- `tourmanager-app`: Es el nombre de la imagen que acabas de construir en el paso anterior.
+
+### 3. Probar tu aplicación
+Abre tu navegador y dirígete a http://localhost:8080. ¡Deberías ver tu aplicación funcionando tal como la ves en desarrollo, pero optimizada para producción!
+
+### Comandos útiles de mantenimiento:
+- Ver los contenedores corriendo: `docker ps`
+- Detener la aplicación: `docker stop mi-tourmanager`
+- Volver a iniciarla: `docker start mi-tourmanager`
+- Borrar el contenedor: `docker rm mi-tourmanager` (si quieres limpiar o crear uno nuevo con cambios recientes, debes detenerlo primero).
