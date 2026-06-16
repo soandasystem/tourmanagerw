@@ -5,9 +5,20 @@
     import { openingStore } from "../../stores/openingStore";
     import { tenantStore } from "../../stores/tenant";
     import { logout } from "../../stores/auth";
+    import { secureStorage } from "../../lib/secureStore";
+    import api from "../../lib/apis";
     import dayjs from "dayjs";
 
     $: idcl = $tenantStore;
+
+
+    // Obtener datos del usuario desde secureStorage
+    const userData = secureStorage.getItem("_us_") || {};
+    const schema = userData.schema || "global";
+    const currentCompanyId = userData.company || 0;
+
+    /** @type {any[]} */
+    let company_name="";
 
     $: ({
         programa,
@@ -33,6 +44,28 @@
         logout();
         navigate(`/${idcl}/login`);
     }
+
+    async function fetchData() {
+        // 4. obtener datos de la compañia
+        const companyRes = await api.getData(
+            "company",
+            "",
+            `id=${currentCompanyId}`,
+            "",
+            "global",
+        );    
+        if (companyRes.status === "success") {
+            const company = Array.isArray(companyRes.data)
+                ? companyRes.data[0]
+                : companyRes.data;
+            if (company) {
+                company_name = company.nomfantasia || "";
+            }
+        }
+    }
+    onMount(() => {
+        fetchData();
+    });
 </script>
 
 <div class="opening-container">
@@ -44,7 +77,7 @@
         </button>
         <div class="header-content">
             <div class="welcome-badge">
-                ¡Bienvenido a la familia Tevy Travel!
+                ¡Bienvenido a la familia {company_name}!
             </div>
             <h1>
                 Prepárate para tu <span class="text-gradient"
