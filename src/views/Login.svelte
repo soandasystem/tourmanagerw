@@ -6,6 +6,7 @@
     import { secureStorage } from "../lib/secureStore";
     import { authStore } from "../stores/auth";
     import { tenantStore } from "../stores/tenant";
+    import { get } from "svelte/store";
     import { clearOpeningStore, fetchSaleInfo } from "../stores/openingStore";
 
     // Props
@@ -43,27 +44,26 @@
         ? ""
         : API_BASE.split("/api/")[0] + "/";
 
-    // Definimos el código de la compañía. Si viene por prop (URL) lo usamos.
-    // Si no viene por prop, verificamos si es una entrada limpia (sin idcl en el store)
-    $: code_company = idcl || "GRL_999";
+    // Definimos el código de la compañía en un solo bloque reactivo
+    // para garantizar que idcl se procese antes de asignar code_company.
+    let code_company = "";
 
-    // Si recibimos un idcl por prop, lo guardamos en el store
-    $: if (idcl) {
-        tenantStore.set(idcl.replace(".png", ""));
+    $: {
+        const clean = idcl ? idcl.replace(".png", "") : "";
+        if (clean) {
+            tenantStore.set(clean);
+            code_company = clean;
+        } else {
+            code_company = "GRL_999";
+        }
+        console.log("code company ", code_company);
+        // Actualizar imagen
+        companyImage = `${IMAGE_BASE}/login_logo_${code_company}.png`;
+        console.log("companyImage ", companyImage);
     }
 
     let imageLoaded = false;
     let imageError = false;
-
-    $: if (code_company) {
-        // Cargar imagen de la empresa
-        if (idcl) {
-            companyImage = `${IMAGE_BASE}/login_logo_${code_company}.png`;
-        } else {
-            // Si no hay idcl en URL, usamos un logo genérico o dejamos que use el fallback
-            companyImage = `${IMAGE_BASE}/login_logo_GRL_999.png`;
-        }
-    }
 
     onMount(() => {
         // Limpiar sesión previa

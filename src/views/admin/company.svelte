@@ -305,7 +305,7 @@
             // Cambiar el nombre del archivo según la regla requerida
             const ext = file.name.substring(file.name.lastIndexOf("."));
             const identifier = companyForm.identificador || code_company;
-            const newName = `login_log_${identifier}${ext}`;
+            const newName = `login_logo_${identifier}${ext}`;
 
             // Creamos un nuevo objeto File con el nombre modificado
             logoFile = new File([file], newName, { type: file.type });

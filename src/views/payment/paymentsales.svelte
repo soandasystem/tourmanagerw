@@ -556,13 +556,6 @@
                                         inputmode="numeric"
                                         placeholder="Ej: 50000"
                                         required
-                                        on:input={(e) => {
-                                            const raw = e.target.value || '';
-                                            const num = Number(String(raw).replace(/[^0-9]/g, ''));
-                                            const deuda = apagar;
-                                            apagarInput = Number.isFinite(num) ? num : 0;
-                                            if (apagarInput > deuda) apagarInput = deuda;
-                                        }}
                                     />
                                 </div>
 
