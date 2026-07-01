@@ -9,6 +9,13 @@
 import { secureStorage } from "./secureStore";
 import dayjs from "dayjs";
 
+export function getMonthName(monthNumber) {
+    const months = [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    return months[monthNumber - 1] || "";
+}
 export function cleanRut(rut) {
     return typeof rut === 'string'
         ? rut.replace(/[^0-9kK]/g, '').toUpperCase()
